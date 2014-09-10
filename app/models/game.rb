@@ -68,18 +68,6 @@ class Game < ActiveRecord::Base
 
   def score(scoring_dice)
 
-
-
-
-    two_three_of_a_kind = (scoring_dice[0..2] && scoring_dice[0..2].length == 3 && scoring_dice[1..2].all? { |scoring_die| scoring_die == scoring_dice[0] }) &&
-      (scoring_dice[3..5] && scoring_dice[3..5].length == 3 && scoring_dice[4..5].all? { |scoring_die| scoring_die == scoring_dice[3] })
-
-    three_pairs = scoring_dice[0] == scoring_dice[1] &&
-      scoring_dice[2] == scoring_dice[3] &&
-      scoring_dice[4] == scoring_dice[5] &&
-      scoring_dice.length == 6 &&
-      !scoring_dice.all? { |scoring_die| scoring_dice[0] == scoring_die }
-
     three_of_a_kind =
       (scoring_dice[0..2] && scoring_dice[0..2].length == 3 && scoring_dice[1..2].all? { |scoring_die| scoring_die == scoring_dice[0] }) ||
         (scoring_dice[1..3] && scoring_dice[1..3].length == 3 && scoring_dice[2..3].all? { |scoring_die| scoring_die == scoring_dice[1] }) ||
@@ -103,7 +91,7 @@ class Game < ActiveRecord::Base
     if Score.new(scoring_dice).straight?
       tally_score = 1500
       scoring_dice.clear
-    elsif three_pairs
+    elsif Score.new(scoring_dice).three_pairs?
       tally_score = 750
       scoring_dice.clear
     elsif six_of_a_kind
@@ -114,7 +102,7 @@ class Game < ActiveRecord::Base
         tally_score = kind.to_i * 100 * 2 * 2 * 2
       end
         scoring_dice.delete(kind)
-    elsif two_three_of_a_kind
+    elsif Score.new(scoring_dice).two_three_of_a_kind?
       kind_0 = scoring_dice[0]
       kind_1 = scoring_dice[3]
       if kind_0 == '1'
