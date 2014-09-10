@@ -67,7 +67,9 @@ class Game < ActiveRecord::Base
   end
 
   def score(scoring_dice)
-    straight = scoring_dice == ['1', '2', '3', '4', '5', '6']
+
+
+
 
     two_three_of_a_kind = (scoring_dice[0..2] && scoring_dice[0..2].length == 3 && scoring_dice[1..2].all? { |scoring_die| scoring_die == scoring_dice[0] }) &&
       (scoring_dice[3..5] && scoring_dice[3..5].length == 3 && scoring_dice[4..5].all? { |scoring_die| scoring_die == scoring_dice[3] })
@@ -98,7 +100,7 @@ class Game < ActiveRecord::Base
 
     tally_score = 0
 
-    if straight
+    if Score.new(scoring_dice).straight?
       tally_score = 1500
       scoring_dice.clear
     elsif three_pairs
